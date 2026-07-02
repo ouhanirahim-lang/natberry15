@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natberry 15 - Management</title>
+    <style>
+        :root {
+            --bg-color: #f4f8f4;
+            --card-bg: #ffffff;
+            --inner-card: #f7faf6;
+            --primary-dark: #082c16;
+            --accent-lime: #8ec927;
+            --accent-lime-hover: #7db320;
+            --text-muted: #5a7363;
+            --input-bg: #f4f8f4;
+            --border-color: #e6eee5;
+            --shadow: 0 8px 24px rgba(8, 44, 22, 0.05);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            color: var(--primary-dark);
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .app-title-container {
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .app-title {
+            color: var(--primary-dark);
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 4px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .app-subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        input, select, textarea {
+            background-color: var(--input-bg);
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            color: var(--primary-dark);
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background-color: var(--card-bg);
+            border-color: var(--accent-lime);
+            box-shadow: 0 0 0 4px rgba(142, 201, 39, 0.15);
+        }
+
+        .selector-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .block-white-card {
+            background-color: var(--inner-card);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-header span {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-xs {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--primary-dark);
+            transition: all 0.2s;
+        }
+        .btn-xs:hover {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            border-color: var(--primary-dark);
+        }
+
+        .scroll-list {
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            max-height: 140px;
+            overflow-y: auto;
+            gap: 8px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--card-bg);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .check-item:has(input:checked) {
+            border-color: var(--accent-lime);
+            background-color: rgba(142, 201, 39, 0.05);
+        }
+
+        .check-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-lime);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .measures-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .measure-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .measure-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: 0.5px;
+            border-left: 3px solid var(--accent-lime);
+            padding-left: 8px;
+        }
+
+        .actions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
+
+        .btn-submit {
+            background: var(--accent-lime);
+            color: var(--primary-dark);
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(142, 201, 39, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+            background-color: var(--accent-lime-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-secondary:active { opacity: 0.9; }
+
+        .sup-display {
+            font-size: 11px;
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        /* Liste des rapports enregistrés cachée par défaut */
+        .records-list {
+            display: none;
+            margin-top: 10px;
+            background: var(--inner-card);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .record-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-delete {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- HEADER APPLICATION -->
+        <div class="app-title-container">
+            <h1 class="app-title">Natberry 15</h1>
+            <p class="app-subtitle">Paramètres Agronomiques</p>
+        </div>
+
+        <!-- SECTION 1: INFOS GÉNÉRALES -->
+        <div class="card form-grid-2">
+            <div class="form-group">
+                <label>Domaine</label>
+                <select id="domaine">
+                    <option value="NATBERRY 15">NATBERRY 15</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="date">
+            </div>
+            <div class="form-group">
+                <label>Culture</label>
+                <select id="culture">
+                    <option value="FRAMBOISE FRAIS">FRAMBOISE FRAIS</option>
+                    <option value="FRAMBOISE INDUSTRIELLE">FRAMBOISE INDUSTRIELLE</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Variété</label>
+                <select id="variete">
+                    <option value="PINK HUDSON">PINK HUDSON</option>
+                    <option value="ABB">ABB</option>
+                    <option value="AMALIA ROSA">AMALIA ROSA</option>
+                    <option value="ADELITA" selected>ADELITA</option>
+                    <option value="P1">P1</option>
+                    <option value="P2">P2</option>
+                    <option value="P3">P3</option>
+                    <option value="STELLA">STELLA</option>
+                    <option value="ARELINA">ARELINA</option>
+                    <option value="SIMONA">SIMONA</option>
+                    <option value="AINE">AINE</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- SECTION 2: CARTOGRAPHIE STRUCTURELLE -->
+        <div class="card selector-layout">
+            <!-- BLOCS -->
+            <div class="block-white-card">
+                <div class="card-header">
+                    <span>BLOCS</span>
+                    <div class="btn-group">
+                        <button class="btn-xs" onclick="selectAll('bloc')">Tout</button>
+                        <button class="btn-xs" onclick="clearAll('bloc')">Vider</button>
+                    </div>
+                </div>
+                <div class="scroll-list" id="list-blocs"></div>
+            </div>
+
+            <!-- PARCELLES -->
+            <div class="block-white-card">
+                <div class="card-header">
+                    <span>PARCELLES</span>
+                    <div class="btn-group">
+                        <button class="btn-xs" onclick="selectAll('parcelle')">Tout</button>
+                        <button class="btn-xs" onclick="clearAll('parcelle')">Vider</button>
+                    </div>
+                </div>
+                <div class="scroll-list" id="list-parcelles"></div>
+            </div>
+
+            <!-- SERRES -->
+            <div class="block-white-card">
+                <div class="card-header">
+                    <span>SERRES</span>
+                    <span class="sup-display" id="superficie">0.00 HA</span>
+                    <div class="btn-group">
+                        <button class="btn-xs" onclick="selectAll('serre')">Tout</button>
+                        <button class="btn-xs" onclick="clearAll('serre')">Vider</button>
+                    </div>
+                </div>
+                <div class="grid-list" id="list-serres"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: IRRIGATION & FERTILISATION -->
+        <div class="card" style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="form-group">
+                <label>Programme de Fertilisation</label>
+                <select id="programme-fert">
+                    <option value="">-- Choisir un programme --</option>
+                    <option value="Programme vegetative (azote)">Programme végétale (azoté)</option>
+                    <option value="Injection">Injection</option>
+                    <option value="Programme generative (potassique)">Programme générative (potassique)</option>
+                    <option value="Lessivage">Lessivage</option>
+                </select>
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Volume d'Irrigation</label>
+                    <input type="number" step="0.01" id="vol-irrigation" placeholder="Ex: 1500">
+                </div>
+                <div class="form-group">
+                    <label>Temps Irrigation (Min)</label>
+                    <input type="number" id="temps-irrigation" placeholder="Ex: 100">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>EC Eau Clair (Bassin)</label>
+                <input type="number" step="0.01" id="ec-eau-clair" placeholder="Valeur EC">
+            </div>
+        </div>
+
+        <!-- SECTION 4: SUIVI PHYSICO-CHIMIQUE -->
+        <div class="card measures-grid">
+            <div>
+                <div class="measure-title">EC & PH D'APPORT (GOUTTEUR)</div>
+                <div class="measure-row">
+                    <div class="form-group"><label>PH</label><input type="number" step="0.1" id="ph-apport" placeholder="5.8"></div>
+                    <div class="form-group"><label>EC</label><input type="number" step="0.01" id="ec-apport" placeholder="2.2"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="measure-title">EC & PH DE JUS DU SUBSTRAT</div>
+                <div class="measure-row">
+                    <div class="form-group"><label>PH</label><input type="number" step="0.1" id="ph-substrat" placeholder="6.1"></div>
+                    <div class="form-group"><label>EC</label><input type="number" step="0.01" id="ec-substrat" placeholder="2.5"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="measure-title">EC & PH DE DRAINÂT</div>
+                <div class="measure-row">
+                    <div class="form-group"><label>PH</label><input type="number" step="0.1" id="ph-drainat" placeholder="5.6"></div>
+                    <div class="form-group"><label>EC</label><input type="number" step="0.01" id="ec-drainat" placeholder="2.1"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="measure-title">ÉTAT DE DRAINAGE</div>
+                <div class="measure-row">
+                    <div class="form-group"><label>Vol. Irrigué (ML)</label><input type="number" id="vol-irrigue-ml" placeholder="1500"></div>
+                    <div class="form-group"><label>Vol. Drainé (ML)</label><input type="number" id="vol-draine-ml" placeholder="3500"></div>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Taux de Drainage (%)</label>
+                    <input type="text" id="taux-drainage" readonly style="text-align: center; font-weight: 700; background: var(--input-bg); color: var(--primary-dark);">
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: OBSERVATION -->
+        <div class="card">
+            <div class="form-group">
+                <label>Observation</label>
+                <textarea id="observation" rows="3" placeholder="Notes de suivi sur la culture..."></textarea>
+            </div>
+        </div>
+
+        <!-- ZONE D'ACTIONS MODERNE -->
+        <div class="actions-container">
+            <button class="btn-submit" onclick="sauvegarderDonnees()">Enregistrer le Rapport</button>
+            <button class="btn-secondary" onclick="toggleRecords()">Afficher la Liste des Rapports (<span id="count-records">0</span>)</button>
+            <button class="btn-secondary" style="background-color: #2e6f40;" onclick="exporterExcel()">Exporter la Liste comme Excel</button>
+            
+            <!-- LISTE CONTENEUR MAQUILLÉ MOBILE -->
+            <div class="records-list" id="records-view"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const STRUCT = {
+            "BLOC A": {
+                "800": { "S 01": 1.12, "S 02": 0.96, "S 03": 0.96, "S 04": 0.96, "S 05": 0.96 },
+                "801": { "S 06": 0.96, "S 07": 0.96, "S 08": 0.96, "S 09": 0.96, "S 10": 1.12 }
+            },
+            "BLOC B": {
+                "802": { "S 11": 1.20, "S 12": 0.88, "S 13": 0.88, "S 14": 0.88, "S 15": 0.90 },
+                "803": { "S 16": 0.90, "S 17": 0.90, "S 18": 0.91, "S 19": 1.14, "S 20": 1.14 }
+            },
+            "BLOC C": {
+                "804": { "S 21": 1.00, "S 22": 0.89, "S 23": 0.80, "S 24": 0.80, "S 25": 0.32, "S 26": 0.83 },
+                "805": { "S 27": 0.90, "S 28": 0.91, "S 29": 0.99, "S 30": 1.12, "S 31": 1.12 }
+            }
+        };
+
+        // Liste globale en mémoire locale stockée sur le smartphone
+        let listRapports = JSON.parse(localStorage.getItem('natberry_reports')) || [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('date').valueAsDate = new Date();
+            initBlocs();
+            updateCount();
+            document.getElementById('vol-irrigue-ml').addEventListener('input', calculTauxDrainage);
+            document.getElementById('vol-draine-ml').addEventListener('input', calculTauxDrainage);
+        });
+
+        function initBlocs() {
+            const container = document.getElementById('list-blocs');
+            container.innerHTML = Object.keys(STRUCT).map(bloc => `
+                <label class="check-item">
+                    <input type="checkbox" name="bloc" value="${bloc}" onchange="updateParcelles()"> ${bloc}
+                </label>
+            `).join('');
+        }
+
+        function updateParcelles() {
+            const blocsCoaches = Array.from(document.querySelectorAll('input[name="bloc"]:checked')).map(cb => cb.value);
+            const container = document.getElementById('list-parcelles');
+            container.innerHTML = '';
+            document.getElementById('list-serres').innerHTML = '';
+            updateSuperficie();
+
+            let parcellesDispo = [];
+            blocsCoaches.forEach(bloc => {
+                parcellesDispo = parcellesDispo.concat(Object.keys(STRUCT[bloc]));
+            });
+
+            container.innerHTML = parcellesDispo.map(parcelle => `
+                <label class="check-item">
+                    <input type="checkbox" name="parcelle" value="${parcelle}" onchange="updateSerres()"> Parcelle ${parcelle}
+                </label>
+            `).join('');
+        }
+
+        function updateSerres() {
+            const parcellesCochees = Array.from(document.querySelectorAll('input[name="parcelle"]:checked')).map(cb => cb.value);
+            const container = document.getElementById('list-serres');
+            container.innerHTML = '';
+            updateSuperficie();
+
+            let serresDispo = [];
+            Object.keys(STRUCT).forEach(bloc => {
+                Object.keys(STRUCT[bloc]).forEach(parcelle => {
+                    if(parcellesCochees.includes(parcelle)) {
+                        Object.keys(STRUCT[bloc][parcelle]).forEach(serre => {
+                            serresDispo.push({ name: serre, sup: STRUCT[bloc][parcelle][serre] });
+                        });
+                    }
+                });
+            });
+
+            container.innerHTML = serresDispo.map(serre => `
+                <label class="check-item">
+                    <input type="checkbox" name="serre" value="${serre.name}" data-sup="${serre.sup}" onchange="updateSuperficie()"> ${serre.name}
+                </label>
+            `).join('');
+        }
+
+        function updateSuperficie() {
+            const serresCochees = document.querySelectorAll('input[name="serre"]:checked');
+            let total = 0;
+            serresCochees.forEach(cb => {
+                total += parseFloat(cb.getAttribute('data-sup'));
+            });
+            document.getElementById('superficie').innerText = total.toFixed(2) + " HA";
+        }
+
+        function selectAll(type) {
+            document.querySelectorAll(`input[name="${type}"]`).forEach(cb => {
+                cb.checked = true;
+                cb.dispatchEvent(new Event('change'));
+            });
+        }
+
+        function clearAll(type) {
+            document.querySelectorAll(`input[name="${type}"]`).forEach(cb => {
+                cb.checked = false;
+                cb.dispatchEvent(new Event('change'));
+            });
+        }
+
+        function calculTauxDrainage() {
+            const volIrrigue = parseFloat(document.getElementById('vol-irrigue-ml').value);
+            const volDraine = parseFloat(document.getElementById('vol-draine-ml').value);
+            const tauxField = document.getElementById('taux-drainage');
+
+            if (volIrrigue > 0 && !isNaN(volDraine)) {
+                const taux = (volDraine / volIrrigue) * 100;
+                tauxField.value = taux.toFixed(1) + " %";
+            } else {
+                tauxField.value = "";
+            }
+        }
+
+        // ENREGISTRER LES INFORMATIONS DANS UNE LISTE LOCALEMENT
+        function sauvegarderDonnees() {
+            const blocs = Array.from(document.querySelectorAll('input[name="bloc"]:checked')).map(cb => cb.value).join(', ');
+            const parcelles = Array.from(document.querySelectorAll('input[name="parcelle"]:checked')).map(cb => cb.value).join(', ');
+            const serres = Array.from(document.querySelectorAll('input[name="serre"]:checked')).map(cb => cb.value).join(', ');
+
+            const rapport = {
+                id: Date.now(),
+                domaine: document.getElementById('domaine').value,
+                date: document.getElementById('date').value,
+                culture: document.getElementById('culture').value,
+                variete: document.getElementById('variete').value,
+                blocs: blocs || "Aucun",
+                parcelles: parcelles || "Aucune",
+                serres: serres || "Aucune",
+                superficie: document.getElementById('superficie').innerText,
+                programmeFert: document.getElementById('programme-fert').value,
+                volIrrigation: document.getElementById('vol-irrigation').value,
+                tempsIrrigation: document.getElementById('temps-irrigation').value,
+                ecEauClair: document.getElementById('ec-eau-clair').value,
+                phApport: document.getElementById('ph-apport').value,
+                ecApport: document.getElementById('ec-apport').value,
+                phSubstrat: document.getElementById('ph-substrat').value,
+                ecSubstrat: document.getElementById('ec-substrat').value,
+                phDrainat: document.getElementById('ph-drainat').value,
+                ecDrainat: document.getElementById('ec-drainat').value,
+                volIrrigueMl: document.getElementById('vol-irrigue-ml').value,
+                volDraineMl: document.getElementById('vol-draine-ml').value,
+                tauxDrainage: document.getElementById('taux-drainage').value,
+                observation: document.getElementById('observation').value
+            };
+
+            listRapports.push(rapport);
+            localStorage.setItem('natberry_reports', JSON.stringify(listRapports));
+            
+            updateCount();
+            renderRecords();
+            alert("Rapport ajouté à la liste avec succès !");
+        }
+
+        function updateCount() {
+            document.getElementById('count-records').innerText = listRapports.length;
+        }
+
+        function toggleRecords() {
+            const view = document.getElementById('records-view');
+            if(view.style.display === "block") {
+                view.style.display = "none";
+            } else {
+                view.style.display = "block";
+                renderRecords();
+            }
+        }
+
+        function renderRecords() {
+            const container = document.getElementById('records-view');
+            if(listRapports.length === 0) {
+                container.innerHTML = "<p style='color: var(--text-muted); text-align:center;'>Aucun rapport en mémoire.</p>";
+                return;
+            }
+            container.innerHTML = listRapports.map(rep => `
+                <div class="record-item">
+                    <div>
+                        <strong>${rep.date}</strong> - ${rep.variete}<br>
+                        <small>${rep.serres} (${rep.superficie})</small>
+                    </div>
+                    <button class="btn-delete" onclick="supprimerRapport(${rep.id})">X</button>
+                </div>
+            `).join('');
+        }
+
+        function supprimerRapport(id) {
+            listRapports = listRapports.filter(r => r.id !== id);
+            localStorage.setItem('natberry_reports', JSON.stringify(listRapports));
+            updateCount();
+            renderRecords();
+        }
+
+        // EXPORTER LA LISTE EN EXCEL (CSV)
+        function exporterExcel() {
+            if(listRapports.length === 0) {
+                alert("La liste est vide. Enregistrez au moins un rapport avant d'exporter.");
+                return;
+            }
+
+            // En-têtes des colonnes Excel
+            const headers = [
+                "Domaine", "Date", "Culture", "Variete", "Blocs", "Parcelles", "Serres", "Superficie",
+                "Programme Fertilisation", "Volume Irrigation", "Temps Irrigation (min)", "EC Eau Clair",
+                "PH Apport", "EC Apport", "PH Substrat", "EC Substrat", "PH Drainat", "EC Drainat",
+                "Vol Irrigue (ML)", "Vol Draine (ML)", "Taux de Drainage", "Observation"
+            ];
+
+            // Conversion des lignes en format CSV propre (séparateur point-virgule pour Excel français)
+            const rows = listRapports.map(r => [
+                `"${r.domaine}"`, `"${r.date}"`, `"${r.culture}"`, `"${r.variete}"`, `"${r.blocs}"`, `"${r.parcelles}"`, `"${r.serres}"`, `"${r.superficie}"`,
+                `"${r.programmeFert}"`, `"${r.volIrrigation}"`, `"${r.tempsIrrigation}"`, `"${r.ecEauClair}"`,
+                `"${r.phApport}"`, `"${r.ecApport}"`, `"${r.phSubstrat}"`, `"${r.ecSubstrat}"`, `"${r.phDrainat}"`, `"${r.ecDrainat}"`,
+                `"${r.volIrrigueMl}"`, `"${r.volDraineMl}"`, `"${r.tauxDrainage}"`, `"${r.observation.replace(/"/g, '""')}"`
+            ].join(";"));
+
+            const csvContent = "\uFEFF" + [headers.join(";"), ...rows].join("\n");
+            
+            // Création du fichier de téléchargement pour téléphone/PC
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Rapports_Agronomiques_Natberry15_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
