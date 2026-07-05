@@ -3,348 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>g-ferme - Paramètres Agronomiques</title>
+    <title>Natberry 15 - Management</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --primary-green: #0d4627;
-            --accent-green: #177c45;
-            --light-green: #e4eee8;
-            --bg-gray: #b1c2b7;
-            --card-bg: #d0dad3;
-            --input-white: #ffffff;
-            --text-dark: #112a1c;
-            --text-muted: #4e6355;
-            --radius-main: 14px;
-            --radius-sm: 8px;
+            --bg-color: #f4f8f4;
+            --card-bg: #ffffff;
+            --inner-card: #f7faf6;
+            --primary-dark: #082c16;
+            --accent-lime: #8ec927;
+            --accent-lime-hover: #7db320;
+            --text-muted: #5a7363;
+            --input-bg: #f4f8f4;
+            --border-color: #e6eee5;
+            --shadow: 0 8px 24px rgba(8, 44, 22, 0.05);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg-gray); display: flex; height: 100vh; overflow: hidden; color: var(--text-dark); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* BARRE LATÉRALE GAUCHE (SIDEBAR) */
-        .sidebar { width: 220px; background-color: var(--primary-green); color: white; display: flex; flex-direction: column; padding: 15px 0; }
-        .logo-area { padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .logo-title { font-size: 24px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 5px; }
-        .logo-title span { color: #5ad88b; }
-        .farm-tag { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 16px;
+            color: var(--primary-dark);
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .app-title-container { text-align: center; margin-top: 8px; }
+        .app-title { font-size: 24px; font-weight: 800; margin: 0 0 4px 0; }
+        .app-subtitle { color: var(--text-muted); font-size: 13px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; }
         
-        .menu-section { margin-bottom: 20px; }
-        .menu-title { font-size: 11px; text-transform: uppercase; font-weight: 700; padding: 8px 20px; color: #8cb89f; letter-spacing: 0.5px; }
-        .menu-item { display: flex; align-items: center; padding: 10px 20px; font-size: 13px; font-weight: 600; color: #cbdcd1; text-decoration: none; cursor: pointer; }
-        .menu-item.active { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; border-left: 4px solid #5ad88b; padding-left: 16px; }
-        .menu-item:hover:not(.active) { background-color: rgba(255, 255, 255, 0.05); }
+        label { font-size: 11px; font-weight: 700; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; }
 
-        /* CONTENU PRINCIPAL */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        input, select, textarea {
+            background-color: var(--input-bg);
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            color: var(--primary-dark);
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            width: 100%;
+        }
 
-        /* ONGLETS DU HAUT (TOP TABS) */
-        .top-tabs-nav { display: flex; background-color: #8fa597; overflow-x: auto; border-bottom: 2px solid var(--primary-green); }
-        .top-tab { padding: 12px 20px; font-size: 12px; font-weight: 700; color: var(--text-dark); border: none; background: transparent; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-        .top-tab.active { background-color: var(--input-white); border-top: 3px solid #1ebb68; color: var(--primary-green); border-radius: 6px 6px 0 0; margin-top: -2px; }
+        input:focus, select:focus, textarea:focus {
+            background-color: var(--card-bg);
+            border-color: var(--accent-lime);
+        }
 
-        /* ZONE DU FORMULAIRE */
-        .workspace-scroll { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
+        .block-white-card {
+            background-color: var(--inner-card);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
 
-        /* EN-TÊTE PRINCIPAL (DOMAINE / DATE / CULTURE / VARIÉTÉ) */
-        .header-row-card { background-color: var(--card-bg); border-radius: var(--radius-main); padding: 12px 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .card-header span { font-size: 13px; font-weight: 800; }
 
-        .field-group { display: flex; flex-direction: column; gap: 4px; }
-        .field-group label { font-size: 11px; font-weight: 800; color: var(--primary-green); text-transform: uppercase; }
+        .btn-group { display: flex; gap: 6px; }
+        .btn-xs {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .scroll-list { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .grid-list { display: grid; grid-template-columns: repeat(2, 1fr); max-height: 140px; overflow-y: auto; gap: 8px; }
+
+        .check-item {
+            display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600;
+            background: var(--card-bg); padding: 10px 12px; border-radius: var(--radius-sm);
+            cursor: pointer; border: 1px solid var(--border-color);
+        }
+        .check-item:has(input:checked) { border-color: var(--accent-lime); background-color: rgba(142, 201, 39, 0.05); }
+        .check-item input { width: 18px; height: 18px; accent-color: var(--accent-lime); margin: 0; }
+
+        .measure-title { font-size: 12px; font-weight: 800; border-left: 3px solid var(--accent-lime); padding-left: 8px; margin-top: 14px;}
+        .measure-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+
+        .actions-container { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; margin-bottom: 24px; }
         
-        input, select, textarea { background-color: var(--input-white); border: 1px solid #a3b5aa; border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13px; font-weight: 600; color: var(--text-dark); outline: none; width: 100%; }
-        input:focus, select:focus { border-color: var(--primary-green); box-shadow: 0 0 0 2px rgba(13,70,39,0.1); }
+        .btn-submit {
+            background: var(--accent-lime); color: var(--primary-dark); border: none;
+            width: 100%; padding: 16px; border-radius: var(--radius-md);
+            font-weight: 700; font-size: 15px; cursor: pointer;
+            box-shadow: 0 6px 16px rgba(142, 201, 39, 0.2);
+        }
+        .btn-secondary {
+            background-color: var(--primary-dark); color: white; border: none;
+            padding: 14px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px; cursor: pointer;
+        }
 
-        /* BLOCS DE DEUXIÈME LIGNE (STRUCTURES + OBSERVATION) */
-        .structures-row { display: grid; grid-template-columns: repeat(3, 1fr) 1.2fr; gap: 12px; }
-        .box-panel { background-color: var(--card-bg); border-radius: var(--radius-main); padding: 12px; display: flex; flex-direction: column; }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 4px; }
-        .panel-header span { font-size: 11px; font-weight: 800; color: var(--primary-green); }
-        .panel-actions { display: flex; gap: 4px; }
+        .sup-display { font-size: 11px; background-color: var(--primary-dark); color: white; padding: 4px 10px; border-radius: 20px; font-weight: 700; }
+
+        /* DESIGN DES ONGLETS (TABS) DE FILTRAGE DES BLOCS */
+        .bloc-tabs-container {
+            display: flex;
+            background-color: var(--inner-card);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .bloc-tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+        .bloc-tab-btn.active {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+
+        /* TABLEAU DES ENTRÉES ENREGISTRÉES CÔTÉ UI */
+        .records-wrapper { display: none; }
+        .table-responsive { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        .ui-table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; text-align: left; }
+        .ui-table th, .ui-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
+        .ui-table th { background: var(--inner-card); font-weight: 700; }
         
-        .btn-mini { background-color: var(--input-white); border: 1px solid #a3b5aa; border-radius: 12px; padding: 2px 8px; font-size: 10px; font-weight: 700; cursor: pointer; }
-        .btn-mini:hover { background-color: var(--light-green); }
+        .btn-action-table {
+            padding: 4px 8px; border-radius: 6px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; margin-right: 4px;
+        }
+        .btn-dl { background: var(--accent-lime); color: var(--primary-dark); }
+        .btn-del { background: #ff4d4d; color: white; }
 
-        .items-list-container { max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
-        .grid-list-container { display: grid; grid-template-columns: repeat(2, 1fr); max-height: 110px; overflow-y: auto; gap: 5px; }
-
-        .chk-lbl { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; background: var(--input-white); padding: 6px 8px; border-radius: var(--radius-sm); border: 1px solid #b8c7be; cursor: pointer; }
-        .chk-lbl input { width: 15px; height: 15px; accent-color: var(--primary-green); margin: 0; width: auto; }
-
-        /* LIGNE FERTILISATION */
-        .fertilization-card { background-color: var(--card-bg); border-radius: var(--radius-main); padding: 12px 18px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; }
-
-        /* SOUS-SECTIONS TECHNIQUES (EC/PH & DRAINAGE) */
-        .technical-grid { display: grid; grid-template-columns: repeat(3, 1fr) 1.5fr; gap: 12px; }
-        .tech-title-badge { font-size: 10px; font-weight: 800; color: var(--primary-green); margin-bottom: 6px; text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 3px; }
-        .inner-inline-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .inner-triple-fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-
-        /* ZONE D'ACTIONS */
-        .bottom-actions { display: flex; gap: 12px; margin-top: 4px; }
-        .btn-main { flex: 2; background-color: var(--primary-green); color: white; border: none; padding: 12px; border-radius: var(--radius-sm); font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
-        .btn-main:hover { background-color: var(--accent-green); }
-        .btn-view-toggle { flex: 1; background-color: var(--text-muted); color: white; border: none; padding: 12px; border-radius: var(--radius-sm); font-weight: 600; font-size: 13px; cursor: pointer; }
-
-        /* TABLEAU DES RÉSULTATS AVEC TRIPLES ONGLETS BLOCS */
-        .results-section-box { display: none; background-color: var(--input-white); border-radius: var(--radius-main); padding: 15px; border: 2px solid var(--primary-green); margin-bottom: 20px; }
+        /* ZONE MASQUÉE HAUTE QUALITÉ POUR L'EXPORTATION PNG DÉTAILLÉE */
+        .hidden-capture-zone { position: absolute; left: -9999px; top: -9999px; }
+        .premium-png-box { width: 500px; background: #082c16; color: white; padding: 25px; border-radius: 20px; font-family: Arial, sans-serif; }
+        .png-header { text-align: center; border-bottom: 2px solid #8ec927; padding-bottom: 12px; margin-bottom: 15px; }
+        .png-header h2 { margin: 0; color: #8ec927; font-size: 24px; letter-spacing: -0.5px; }
+        .png-header p { margin: 5px 0 0 0; color: #a2c4ae; font-size: 13px; }
         
-        .bloc-subtabs { display: flex; background: var(--light-green); padding: 3px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid #a4bba8; }
-        .subtab-btn { flex: 1; padding: 8px; border: none; background: transparent; font-weight: 700; font-size: 12px; color: var(--text-muted); cursor: pointer; border-radius: var(--radius-sm); }
-        .subtab-btn.active { background-color: var(--primary-green); color: white; }
+        .png-table { width: 100%; border-collapse: collapse; margin-top: 5px; margin-bottom: 20px; }
+        .png-table th, .png-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid #144525; text-align: left; }
+        .png-table th { color: #8ec927; width: 40%; font-weight: 700; }
+        .png-table td { color: #ffffff; font-weight: 600; }
+        .png-divider { background: #0d3b1e; color: #8ec927; font-weight: 800; font-size: 13px; padding: 6px 10px; border-left: 4px solid #8ec927; }
 
-        .table-container { overflow-x: auto; margin-top: 8px; }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-        .data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid #cbdcd1; }
-        .data-table th { background: var(--light-green); font-weight: 700; color: var(--primary-green); }
-        
-        .action-dl-btn { background: #1ebb68; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 11px; margin-right: 3px; }
-        .action-del-btn { background: #d9534f; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 11px; }
-
-        /* LOGO SUPERFICIE HAUT */
-        .sup-header-badge { font-size: 11px; background: var(--primary-green); color: white; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
-
-        /* ZONE CACHÉE POUR LA CAPTURE PREMIUM DÉTAILLÉE */
-        .hidden-export-zone { position: absolute; left: -9999px; top: -9999px; }
-        .premium-png-template { width: 550px; background: #072917; color: white; padding: 25px; border-radius: 16px; font-family: Arial, sans-serif; }
-        .png-title-box { text-align: center; border-bottom: 2px solid #5ad88b; padding-bottom: 10px; margin-bottom: 15px; }
-        .png-title-box h2 { color: #5ad88b; margin: 0; font-size: 22px; }
-        .png-title-box p { font-size: 12px; color: #a5c7b3; margin-top: 4px; }
-        
-        .png-data-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
-        .png-data-table th, .png-data-table td { padding: 7px 9px; font-size: 12px; border-bottom: 1px solid #114226; text-align: left; }
-        .png-data-table th { color: #5ad88b; width: 40%; font-weight: 700; }
-        .png-data-table td { color: #ffffff; font-weight: 600; }
-        .png-section-break { background: #0b3820; color: #5ad88b; font-weight: 800; padding: 5px 8px; border-left: 4px solid #5ad88b; font-size: 12px; }
-        .spacer-cards { border-top: 4px dashed #5ad88b; margin-top: 20px; padding-top: 20px; }
+        .global-card-spacing { border-top: 4px dashed #8ec927; margin-top: 25px; padding-top: 25px; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo-area">
-            <div class="logo-title">g-<span>ferme</span></div>
-            <div class="farm-tag">natberry26-27</div>
-        </div>
+    <div class="app-container">
         
-        <div class="menu-section">
-            <div class="menu-title">G-STOCK</div>
-            <a class="menu-item">La Gestion</a>
+        <div class="app-title-container">
+            <h1 class="app-title">Natberry 15</h1>
+            <p class="app-subtitle">Suivi Agronomique par Serre</p>
         </div>
 
-        <div class="menu-section">
-            <div class="menu-title">G-AGRICOLE</div>
-            <a class="menu-item">La Gestion</a>
-            <a class="menu-item">Travaux Réels</a>
+        <div class="card form-grid-2">
+            <div class="form-group"><label>Domaine</label><select id="domaine"><option value="NATBERRY 15">NATBERRY 15</option></select></div>
+            <div class="form-group"><label>Date</label><input type="date" id="date"></div>
+            <div class="form-group"><label>Culture</label><select id="culture"><option value="FRAMBOISE FRAIS">FRAMBOISE FRAIS</option><option value="FRAMBOISE INDUSTRIELLE">FRAMBOISE INDUSTRIELLE</option></select></div>
+            <div class="form-group"><label>Variété</label><select id="variete">
+                <option value="" selected>-- Choisir une variété --</option>
+                <option value="ADELITA">ADELITA</option>
+                <option value="SIMONA">SIMONA</option>
+                <option value="PINK HUDSON">PINK HUDSON</option>
+                <option value="ABB">ABB</option>
+                <option value="AMALIA ROSA">AMALIA ROSA</option>
+                <option value="STELLA">STELLA</option>
+            </select></div>
         </div>
 
-        <div class="menu-section">
-            <div class="menu-title">G-PRODUCTION</div>
-            <a class="menu-item active">Paramètres Agronomiques</a>
-        </div>
-    </div>
-
-    <div class="main-content">
-        
-        <div class="top-tabs-nav">
-            <button class="top-tab">Engrais</button>
-            <button class="top-tab">Pesticides</button>
-            <button class="top-tab">Biostimulants</button>
-            <button class="top-tab">Substrat</button>
-            <button class="top-tab">Rendement Par Serre</button>
-            <button class="top-tab">Conditions Climatiques</button>
-            <button class="top-tab active">Paramètre Agronomiques</button>
-            <button class="top-tab">Logistique Domaines</button>
+        <div class="card">
+            <div class="block-white-card">
+                <div class="card-header"><span>BLOCS</span><div class="btn-group"><button class="btn-xs" onclick="selectAll('bloc')">Tout</button><button class="btn-xs" onclick="clearAll('bloc')">Vider</button></div></div>
+                <div class="scroll-list" id="list-blocs"></div>
+            </div>
+            <div class="block-white-card">
+                <div class="card-header"><span>PARCELLES</span><div class="btn-group"><button class="btn-xs" onclick="selectAll('parcelle')">Tout</button><button class="btn-xs" onclick="clearAll('parcelle')">Vider</button></div></div>
+                <div class="scroll-list" id="list-parcelles"></div>
+            </div>
+            <div class="block-white-card">
+                <div class="card-header"><span>SERRES SELECTIONNÉES</span><span class="sup-display" id="superficie">0.00 HA</span><div class="btn-group"><button class="btn-xs" onclick="selectAll('serre')">Tout</button><button class="btn-xs" onclick="clearAll('serre')">Vider</button></div></div>
+                <div class="grid-list" id="list-serres"></div>
+            </div>
         </div>
 
-        <div class="workspace-scroll">
+        <div class="card" style="display:flex; flex-direction:column; gap:12px;">
+            <div class="form-group"><label>Programme de Fertilisation</label><select id="programme-fert">
+                <option value="">-- Choisir --</option><option value="Programme vegetative (azote)">Programme végétale (azoté)</option><option value="Injection">Injection</option><option value="Programme generative (potassique)">Programme générative (potassique)</option><option value="Lessivage">Lessivage</option>
+            </select></div>
+            <div class="form-grid-2">
+                <div class="form-group"><label>Vol. Irrigation (L)</label><input type="number" step="0.01" id="vol-irrigation" placeholder="1500"></div>
+                <div class="form-group"><label>Temps (Min)</label><input type="number" id="temps-irrigation" placeholder="100"></div>
+            </div>
+            <div class="form-group"><label>EC Eau Clair (Bassin)</label><input type="number" step="0.01" id="ec-eau-clair" placeholder="0.4"></div>
+
+            <div class="measure-title">EC & PH APPORT / SUBSTRAT / DRAINAT</div>
+            <div class="form-grid-2">
+                <div class="form-group"><label>PH Goutteur</label><input type="number" step="0.1" id="ph-apport" placeholder="5.8"></div>
+                <div class="form-group"><label>EC Goutteur</label><input type="number" step="0.01" id="ec-apport" placeholder="2.2"></div>
+                <div class="form-group"><label>PH Substrat</label><input type="number" step="0.1" id="ph-substrat" placeholder="6.2"></div>
+                <div class="form-group"><label>EC Substrat</label><input type="number" step="0.01" id="ec-substrat" placeholder="2.6"></div>
+                <div class="form-group"><label>PH Drainât</label><input type="number" step="0.1" id="ph-drainat" placeholder="5.7"></div>
+                <div class="form-group"><label>EC Drainât</label><input type="number" step="0.01" id="ec-drainat" placeholder="2.0"></div>
+            </div>
+
+            <div class="measure-title">DRAINAGE QUANTITATIF</div>
+            <div class="form-grid-2">
+                <div class="form-group"><label>Vol. Irrigué (ML)</label><input type="number" id="vol-irrigue-ml" placeholder="1500"></div>
+                <div class="form-group"><label>Vol. Drainé (ML)</label><input type="number" id="vol-draine-ml" placeholder="3500"></div>
+            </div>
+            <div class="form-group"><label>Taux de Drainage (%)</label><input type="text" id="taux-drainage" readonly style="text-align:center; font-weight:700;"></div>
+            <div class="form-group"><label>Observation</label><textarea id="observation" rows="2" placeholder="Notes..."></textarea></div>
+        </div>
+
+        <div class="actions-container">
+            <button class="btn-submit" onclick="enregistrerParSerre()">Enregistrer dans la Liste 📥</button>
+            <button class="btn-secondary" onclick="toggleRecordsView()">Voir les Résultats des Entrées (<span id="count-lbl">0</span>) 👁️</button>
+        </div>
+
+        <div class="card records-wrapper" id="records-box">
             
-            <div class="header-row-card">
-                <div class="field-group">
-                    <label>Domaine</label>
-                    <select id="domaine"><option value="NATBERRY 15">NATBERRY 15</option></select>
-                </div>
-                <div class="field-group">
-                    <label>Date</label>
-                    <input type="date" id="date">
-                </div>
-                <div class="field-group">
-                    <label>Culture</label>
-                    <select id="culture">
-                        <option value="FRAMBOISE FRAIS">FRAMBOISE FRAIS</option>
-                        <option value="FRAMBOISE INDUSTRIELLE">FRAMBOISE INDUSTRIELLE</option>
-                    </select>
-                </div>
-                <div class="field-group">
-                    <label>Variété</label>
-                    <select id="variete">
-                        <option value="" selected>-- Choisir une variété --</option>
-                        <option value="ADELITA">ADELITA</option>
-                        <option value="SIMONA">SIMONA</option>
-                        <option value="PINK HUDSON">PINK HUDSON</option>
-                        <option value="ABB">ABB</option>
-                        <option value="AMALIA ROSA">AMALIA ROSA</option>
-                        <option value="STELLA">STELLA</option>
-                    </select>
-                </div>
+            <div class="bloc-tabs-container">
+                <button class="bloc-tab-btn active" id="tab-BLOC A" onclick="switchBlocTab('BLOC A')">BLOC A</button>
+                <button class="bloc-tab-btn" id="tab-BLOC B" onclick="switchBlocTab('BLOC B')">BLOC B</button>
+                <button class="bloc-tab-btn" id="tab-BLOC C" onclick="switchBlocTab('BLOC C')">BLOC C</button>
             </div>
 
-            <div class="structures-row">
-                <div class="box-panel">
-                    <div class="panel-header">
-                        <span>BLOCS</span>
-                        <div class="panel-actions">
-                            <button class="btn-mini" onclick="selectAllInputs('bloc')">Tout</button>
-                            <button class="btn-mini" onclick="clearAllInputs('bloc')">Vider</button>
-                        </div>
-                    </div>
-                    <div class="items-list-container" id="box-blocs"></div>
-                </div>
-
-                <div class="box-panel">
-                    <div class="panel-header">
-                        <span>PARCELLES</span>
-                        <div class="panel-actions">
-                            <button class="btn-mini" onclick="selectAllInputs('parcelle')">Tout</button>
-                            <button class="btn-mini" onclick="clearAllInputs('parcelle')">Vider</button>
-                        </div>
-                    </div>
-                    <div class="items-list-container" id="box-parcelles"></div>
-                </div>
-
-                <div class="box-panel">
-                    <div class="panel-header">
-                        <span>SERRES</span>
-                        <span class="sup-header-badge" id="sup-txt">0.00 HA</span>
-                        <div class="panel-actions">
-                            <button class="btn-mini" onclick="selectAllInputs('serre')">Tout</button>
-                            <button class="btn-mini" onclick="clearAllInputs('serre')">Vider</button>
-                        </div>
-                    </div>
-                    <div class="grid-list-container" id="box-serres"></div>
-                </div>
-
-                <div class="box-panel">
-                    <div class="panel-header"><span>OBSERVATION</span></div>
-                    <textarea id="observation" style="flex: 1; resize: none;" placeholder="Saisir vos remarques ici..."></textarea>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:800; font-size:13px; color:var(--primary-dark);" id="bloc-title-indicator">LISTE : BLOC A</span>
+                <button class="btn-xs" style="background:#082c16; color:white; border-color:#082c16;" onclick="telechargerFichesDuBlocActuel()">Télécharger ce Bloc en PNG 🖼️</button>
             </div>
 
-            <div class="fertilization-card">
-                <div class="field-group">
-                    <label>Programme de Fertilisation</label>
-                    <select id="prog-fert">
-                        <option value="">-- Choisir --</option>
-                        <option value="Programme vegetative (azote)">Programme végétative (azoté)</option>
-                        <option value="Injection">Injection</option>
-                        <option value="Programme generative (potassique)">Programme générative (potassique)</option>
-                        <option value="Lessivage">Lessivage</option>
-                    </select>
-                </div>
-                <div class="field-group">
-                    <label>Volume d'irrigation</label>
-                    <input type="number" step="0.01" id="vol-irr" placeholder="1500">
-                </div>
-                <div class="field-group">
-                    <label>Temps d'irrigation (min)</label>
-                    <input type="number" id="temps-irr" placeholder="100">
-                </div>
-                <div class="field-group">
-                    <label>EC Eau Clair (Bassin)</label>
-                    <input type="number" step="0.01" id="ec-bassin" placeholder="0.4">
-                </div>
+            <div class="table-responsive">
+                <table class="ui-table">
+                    <thead>
+                        <tr>
+                            <th>Serre (Date)</th>
+                            <th>Variété</th>
+                            <th>EC App/Drn</th>
+                            <th>% Drn</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body-rows"></tbody>
+                </table>
             </div>
-
-            <div class="technical-grid">
-                <div class="box-panel">
-                    <div class="tech-title-badge">EC & PH D'APPORT (GOUTTEUR)</div>
-                    <div class="inner-inline-fields">
-                        <div class="field-group"><label>PH</label><input type="number" step="0.1" id="ph-app" placeholder="5.8"></div>
-                        <div class="field-group"><label>EC</label><input type="number" step="0.01" id="ec-app" placeholder="2.2"></div>
-                    </div>
-                </div>
-
-                <div class="box-panel">
-                    <div class="tech-title-badge">EC & PH DE JUS DU SUBSTRAT</div>
-                    <div class="inner-inline-fields">
-                        <div class="field-group"><label>PH</label><input type="number" step="0.1" id="ph-sub" placeholder="6.2"></div>
-                        <div class="field-group"><label>EC</label><input type="number" step="0.01" id="ec-sub" placeholder="2.6"></div>
-                    </div>
-                </div>
-
-                <div class="box-panel">
-                    <div class="tech-title-badge">EC & PH DE DRAINÂT</div>
-                    <div class="inner-inline-fields">
-                        <div class="field-group"><label>PH</label><input type="number" step="0.1" id="ph-drn" placeholder="5.7"></div>
-                        <div class="field-group"><label>EC</label><input type="number" step="0.01" id="ec-drn" placeholder="2.0"></div>
-                    </div>
-                </div>
-
-                <div class="box-panel">
-                    <div class="tech-title-badge">ETAT DE DRAINAGE</div>
-                    <div class="inner-triple-fields">
-                        <div class="field-group"><label>Vol. Irrigué (ML)</label><input type="number" id="v-irr-ml" placeholder="1500"></div>
-                        <div class="field-group"><label>Vol. Drainé (ML)</label><input type="number" id="v-drn-ml" placeholder="3500"></div>
-                        <div class="field-group"><label>Taux Drainage (%)</label><input type="text" id="taux-drn-prc" readonly style="background:#eef2ef; text-align:center;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bottom-actions">
-                <button class="btn-main" onclick="enregistrerDonnees()">Enregistrer dans la base de données 📥</button>
-                <button class="btn-view-toggle" onclick="toggleDisplayResultats()">Afficher les Résultats par Bloc (<span id="total-badge-lbl">0</span>) 👁️</button>
-            </div>
-
-            <div class="results-section-box" id="results-toggle-card">
-                
-                <div class="bloc-subtabs">
-                    <button class="subtab-btn active" id="btn-tab-BLOC A" onclick="filtrerParBlocActif('BLOC A')">BLOC A</button>
-                    <button class="subtab-btn" id="btn-tab-BLOC B" onclick="filtrerParBlocActif('BLOC B')">BLOC B</button>
-                    <button class="subtab-btn" id="btn-tab-BLOC C" onclick="filtrerParBlocActif('BLOC C')">BLOC C</button>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-weight:800; font-size:12px; color:var(--primary-green);" id="bloc-view-indicator">SERRES ENREGISTRÉES : BLOC A</span>
-                    <button class="btn-mini" style="background:var(--primary-green); color:white;" onclick="telechargerBlocCompletEnPng()">Télécharger ce bloc entier en PNG 🖼️</button>
-                </div>
-
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Serre & Date</th>
-                                <th>Variété</th>
-                                <th>EC Apport / Drainât</th>
-                                <th>Taux Drainage</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-render-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
+
     </div>
 
-    <div class="hidden-export-zone">
-        <div id="capture-individuelle-box" class="premium-png-template">
-            <div class="png-title-box"><h2 id="png-ind-title">NATBERRY 15</h2><p>Fiche Technique de Suivi Agronomique</p></div>
-            <table class="png-data-table" id="table-ind-content"></table>
+    <div class="hidden-capture-zone">
+        <div id="single-report-png" class="premium-png-box">
+            <div class="png-header"><h2 id="p-title">NATBERRY 15</h2><p>Rapport de Suivi Agronomique</p></div>
+            <table class="png-table" id="single-table-content"></table>
         </div>
 
-        <div id="capture-bloc-box" style="width: 550px; background: #072917; padding: 20px; border-radius: 16px;">
-            <div class="png-title-box">
-                <h2 id="png-bloc-main-title">NATBERRY 15</h2>
-                <p id="png-bloc-sub-title">Rapport Global Par Bloc</p>
+        <div id="global-fiches-png" style="width: 500px; background: #082c16; padding: 20px; border-radius: 20px;">
+            <div class="png-header" style="border-bottom: 2px solid #8ec927; text-align: center; padding-bottom: 12px; margin-bottom: 15px;">
+                <h2 style="color: #8ec927; margin: 0; font-family: Arial; font-size: 24px;" id="global-png-main-title">NATBERRY 15</h2>
+                <p style="color: #a2c4ae; margin: 5px 0 0 0; font-family: Arial; font-size: 13px;" id="global-png-subtitle">Rapport Complet Détaillé</p>
             </div>
-            <div id="container-global-bloc-fiches"></div>
+            <div id="global-fiches-container"></div>
         </div>
     </div>
 
     <script>
-        // Structure originale avec correction de la parcelle 801
-        const STRUCTURE_FERME = {
+        const STRUCT = {
             "BLOC A": {
                 "800": { "S 01": 1.12, "S 02": 0.96, "S 03": 0.96, "S 04": 0.96, "S 05": 0.96 },
                 "801": { "S 06": 0.96, "S 07": 0.96, "S 08": 0.96, "S 09": 0.96, "S 10": 1.12 }
@@ -359,211 +315,199 @@
             }
         };
 
-        let localDatabase = JSON.parse(localStorage.getItem('g_ferme_agri_db')) || [];
-        let blocSelectionneFiltre = "BLOC A";
+        let db = JSON.parse(localStorage.getItem('natberry_serres_db')) || [];
+        let currentActiveBlocTab = "BLOC A"; 
 
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('date').valueAsDate = new Date();
-            chargerBlocsConfiguration();
-            remonterCompteurTotal();
-            
-            document.getElementById('v-irr-ml').addEventListener('input', recalculAutomatiqueTaux);
-            document.getElementById('v-drn-ml').addEventListener('input', recalculAutomatiqueTaux);
+            initBlocs();
+            updateCountLabel();
+            document.getElementById('vol-irrigue-ml').addEventListener('input', calculTauxDrainage);
+            document.getElementById('vol-draine-ml').addEventListener('input', calculTauxDrainage);
         });
 
-        function chargerBlocsConfiguration() {
-            document.getElementById('box-blocs').innerHTML = Object.keys(STRUCTURE_FERME).map(b => 
-                `<label class="chk-lbl"><input type="checkbox" name="bloc" value="${b}" onchange="rafraichirParcelles()"> ${b}</label>`
-            ).join('');
+        function initBlocs() {
+            document.getElementById('list-blocs').innerHTML = Object.keys(STRUCT).map(b => `<label class="check-item"><input type="checkbox" name="bloc" value="${b}" onchange="updateParcelles()"> ${b}</label>`).join('');
         }
 
-        function rafraichirParcelles() {
-            const blocsCoches = Array.from(document.querySelectorAll('input[name="bloc"]:checked')).map(c => c.value);
-            let htmlCode = [];
-            blocsCoches.forEach(b => {
-                Object.keys(STRUCTURE_FERME[b]).forEach(p => {
-                    htmlCode.push(`<label class="chk-lbl"><input type="checkbox" name="parcelle" value="${p}" onchange="rafraichirSerres()"> Parcelle ${p}</label>`);
-                });
-            });
-            document.getElementById('box-parcelles').innerHTML = htmlCode.join('');
-            document.getElementById('box-serres').innerHTML = '';
-            recalculSuperficie();
+        function updateParcelles() {
+            const blocs = Array.from(document.querySelectorAll('input[name="bloc"]:checked')).map(cb => cb.value);
+            let parcelles = [];
+            blocs.forEach(b => parcelles = parcelles.concat(Object.keys(STRUCT[b])));
+            document.getElementById('list-parcelles').innerHTML = parcelles.map(p => `<label class="check-item"><input type="checkbox" name="parcelle" value="${p}" onchange="updateSerres()"> Parcelle ${p}</label>`).join('');
+            document.getElementById('list-serres').innerHTML = '';
+            updateSuperficie();
         }
 
-        function rafraichirSerres() {
-            const parcellesCochees = Array.from(document.querySelectorAll('input[name="parcelle"]:checked')).map(c => c.value);
-            let htmlCode = [];
-            Object.keys(STRUCTURE_FERME).forEach(b => {
-                Object.keys(STRUCTURE_FERME[b]).forEach(p => {
-                    if(parcellesCochees.includes(p)) {
-                        Object.keys(STRUCTURE_FERME[b][p]).forEach(s => {
-                            let sup = STRUCTURE_FERME[b][p][s];
-                            htmlCode.push(`<label class="chk-lbl"><input type="checkbox" name="serre" value="${s}" data-sup="${sup}" data-parc="${p}" data-bloc="${b}" onchange="recalculSuperficie()"> ${s}</label>`);
-                        });
-                    }
-                });
-            });
-            document.getElementById('box-serres').innerHTML = htmlCode.join('');
-            recalculSuperficie();
+        function updateSerres() {
+            const parcelles = Array.from(document.querySelectorAll('input[name="parcelle"]:checked')).map(cb => cb.value);
+            let serres = [];
+            Object.keys(STRUCT).forEach(b => Object.keys(STRUCT[b]).forEach(p => {
+                if(parcelles.includes(p)) Object.keys(STRUCT[b][p]).forEach(s => serres.push({ name: s, sup: STRUCT[b][p][s], parc: p, bloc: b }));
+            }));
+            document.getElementById('list-serres').innerHTML = serres.map(s => `<label class="check-item"><input type="checkbox" name="serre" value="${s.name}" data-sup="${s.sup}" data-parc="${s.parc}" data-bloc="${s.bloc}" onchange="updateSuperficie()"> ${s.name}</label>`).join('');
+            updateSuperficie();
         }
 
-        function recalculSuperficie() {
+        function updateSuperficie() {
             let total = 0;
-            document.querySelectorAll('input[name="serre"]:checked').forEach(c => total += parseFloat(c.getAttribute('data-sup')));
-            document.getElementById('sup-txt').innerText = total.toFixed(2) + " HA";
+            document.querySelectorAll('input[name="serre"]:checked').forEach(cb => total += parseFloat(cb.getAttribute('data-sup')));
+            document.getElementById('superficie').innerText = total.toFixed(2) + " HA";
         }
 
-        function selectAllInputs(name) { document.querySelectorAll(`input[name="${name}"]`).forEach(c => { c.checked = true; c.dispatchEvent(new Event('change')); }); }
-        function clearAllInputs(name) { document.querySelectorAll(`input[name="${name}"]`).forEach(c => { c.checked = false; c.dispatchEvent(new Event('change')); }); }
+        function selectAll(type) { document.querySelectorAll(`input[name="${type}"]`).forEach(cb => { cb.checked = true; cb.dispatchEvent(new Event('change')); }); }
+        function clearAll(type) { document.querySelectorAll(`input[name="${type}"]`).forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); }); }
 
-        function recalculAutomatiqueTaux() {
-            const vIrr = parseFloat(document.getElementById('v-irr-ml').value);
-            const vDrn = parseFloat(document.getElementById('v-drn-ml').value);
-            document.getElementById('taux-drn-prc').value = (vIrr > 0 && !isNaN(vDrn)) ? ((vDrn / vIrr) * 100).toFixed(1) + " %" : "";
+        function calculTauxDrainage() {
+            const vi = parseFloat(document.getElementById('vol-irrigue-ml').value);
+            const vd = parseFloat(document.getElementById('vol-draine-ml').value);
+            document.getElementById('taux-drainage').value = (vi > 0 && !isNaN(vd)) ? ((vd / vi) * 100).toFixed(1) + " %" : "";
         }
 
-        function remonterCompteurTotal() {
-            document.getElementById('total-badge-lbl').innerText = localDatabase.length;
-        }
+        function enregistrerParSerre() {
+            const serresCochees = Array.from(document.querySelectorAll('input[name="serre"]:checked'));
+            if(serresCochees.length === 0) { alert("Veuillez sélectionner au moins une serre !"); return; }
 
-        function enregistrerDonnees() {
-            const serresSelectionnees = Array.from(document.querySelectorAll('input[name="serre"]:checked'));
-            if(serresSelectionnees.length === 0) { alert("Erreur: Choisissez au moins une serre active !"); return; }
-
+            // Logique de validation de la variété vide par défaut
             const varieteSelect = document.getElementById('variete');
-            // Si l'option vide est choisie, on affiche "Non définie" dans le tableau/image
             const varieteValeur = varieteSelect.value === "" ? "Non définie" : varieteSelect.value;
 
-            serresSelectionnees.forEach(s => {
-                localDatabase.push({
+            serresCochees.forEach(cb => {
+                db.push({
                     id: Date.now() + Math.random(),
                     date: document.getElementById('date').value,
                     domaine: document.getElementById('domaine').value,
                     culture: document.getElementById('culture').value,
                     variete: varieteValeur,
-                    bloc: s.getAttribute('data-bloc'),
-                    parcelle: s.getAttribute('data-parc'),
-                    serre: s.value,
-                    superficie: s.getAttribute('data-sup') + " HA",
-                    progFert: document.getElementById('prog-fert').value || "-",
-                    volIrrigation: document.getElementById('vol-irr').value || "-",
-                    tempsIrrigation: document.getElementById('temps-irr').value || "-",
-                    ecBassin: document.getElementById('ec-bassin').value || "-",
-                    phApport: document.getElementById('ph-app').value || "-",
-                    ecApport: document.getElementById('ec-app').value || "-",
-                    phSubstrat: document.getElementById('ph-sub').value || "-",
-                    ecSubstrat: document.getElementById('ec-sub').value || "-",
-                    phDrainat: document.getElementById('ph-drn').value || "-",
-                    ecDrainat: document.getElementById('ec-drn').value || "-",
-                    volIrrigueMl: document.getElementById('v-irr-ml').value || "-",
-                    volDraineMl: document.getElementById('v-drn-ml').value || "-",
-                    tauxDrainage: document.getElementById('taux-drn-prc').value || "-",
+                    bloc: cb.getAttribute('data-bloc'),
+                    parcelle: cb.getAttribute('data-parc'),
+                    serre: cb.value,
+                    superficie: cb.getAttribute('data-sup') + " HA",
+                    progFert: document.getElementById('programme-fert').value || "-",
+                    volIrr: document.getElementById('vol-irrigation').value || "-",
+                    tempsIrr: document.getElementById('temps-irrigation').value || "-",
+                    ecBassin: document.getElementById('ec-eau-clair').value || "-",
+                    phApport: document.getElementById('ph-apport').value || "-",
+                    ecApport: document.getElementById('ec-apport').value || "-",
+                    phSubstrat: document.getElementById('ph-substrat').value || "-",
+                    ecSubstrat: document.getElementById('ec-substrat').value || "-",
+                    phDrainat: document.getElementById('ph-drainat').value || "-",
+                    ecDrainat: document.getElementById('ec-drainat').value || "-",
+                    volIrrigueMl: document.getElementById('vol-irrigue-ml').value || "-",
+                    volDraineMl: document.getElementById('vol-draine-ml').value || "-",
+                    tauxDrainage: document.getElementById('taux-drainage').value || "-",
                     observation: document.getElementById('observation').value || "Aucune"
                 });
             });
 
-            localStorage.setItem('g_ferme_agri_db', JSON.stringify(localDatabase));
-            remonterCompteurTotal();
-            constuireLignesTableau();
-            alert(`Succès: ${serresSelectionnees.length} fiche(s) agronomique(s) insérée(s).`);
+            localStorage.setItem('natberry_serres_db', JSON.stringify(db));
+            updateCountLabel();
+            renderTableRows();
+            alert(`${serresCochees.length} serre(s) ajoutée(s) !`);
         }
 
-        function toggleDisplayResultats() {
-            const blocBox = document.getElementById('results-toggle-card');
-            blocBox.style.display = (blocBox.style.display === "block") ? "none" : "block";
-            if(blocBox.style.display === "block") constuireLignesTableau();
+        function updateCountLabel() { document.getElementById('count-lbl').innerText = db.length; }
+
+        function toggleRecordsView() {
+            const box = document.getElementById('records-box');
+            box.style.display = (box.style.display === "block") ? "none" : "block";
+            if(box.style.display === "block") renderTableRows();
         }
 
-        function filtrerParBlocActif(nomBloc) {
-            blocSelectionneFiltre = nomBloc;
-            document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-tab-${nomBloc}`).classList.add('active');
-            document.getElementById('bloc-view-indicator').innerText = `SERRES ENREGISTRÉES : ${nomBloc}`;
-            constuireLignesTableau();
+        function switchBlocTab(blocName) {
+            currentActiveBlocTab = blocName;
+            document.querySelectorAll('.bloc-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${blocName}`).classList.add('active');
+            document.getElementById('bloc-title-indicator').innerText = `LISTE : ${blocName}`;
+            renderTableRows();
         }
 
-        function constuireLignesTableau() {
-            const tbody = document.getElementById('table-render-body');
-            const dataFiltree = localDatabase.filter(item => item.bloc === blocSelectionneFiltre);
+        function renderTableRows() {
+            const tbody = document.getElementById('table-body-rows');
+            const filteredData = db.filter(r => r.bloc === currentActiveBlocTab);
 
-            if(dataFiltree.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--text-muted);">Aucune mesure pour le ${blocSelectionneFiltre}.</td></tr>`;
+            if(filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Aucune donnée pour le ${currentActiveBlocTab}.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = dataFiltree.map(r => `
+            tbody.innerHTML = filteredData.map(r => `
                 <tr>
-                    <td><strong style="color:var(--primary-green); font-size:13px;">${r.serre}</strong><br><small style="color:var(--text-muted);">${r.date}</small></td>
-                    <td>${r.variete}<br><small>Parcelle ${r.parcelle}</small></td>
-                    <td>App: ${r.ecApport} / Drn: ${r.ecDrainat}</td>
-                    <td style="font-weight:700; color:var(--accent-green);">${r.tauxDrainage}</td>
+                    <td><span style="color:var(--accent-lime-hover); font-weight:800; font-size:13px;">${r.serre}</span><br><small style="color:var(--text-muted);">${r.date}</small></td>
+                    <td>${r.variete}<br><small>P. ${r.parcelle}</small></td>
+                    <td>${r.ecApport} / ${r.ecDrainat}</td>
+                    <td style="font-weight:700;">${r.tauxDrainage}</td>
                     <td>
-                        <button class="action-dl-btn" onclick="telechargerFicheSeule(${r.id})">Fiche</button>
-                        <button class="action-del-btn" onclick="supprimerLigneMesure(${r.id})">X</button>
+                        <button class="btn-action-table btn-dl" onclick="telechargerPNGIndividuel(${r.id})">Fiche</button>
+                        <button class="btn-action-table btn-del" onclick="supprimerLigne(${r.id})">X</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function supprimerLigneMesure(id) {
-            localDatabase = localDatabase.filter(item => item.id !== id);
-            localStorage.setItem('g_ferme_agri_db', JSON.stringify(localDatabase));
-            remonterCompteurTotal();
-            constuireLignesTableau();
+        function supprimerLigne(id) {
+            db = db.filter(r => r.id !== id);
+            localStorage.setItem('natberry_serres_db', JSON.stringify(db));
+            updateCountLabel(); 
+            renderTableRows();
         }
 
-        function fabriquerContenuHtmlTableau(r) {
+        function genererCodeHtmlTableau(r) {
             return `
-                <tr class="png-section-break"><td colspan="2">${r.bloc} &bull; PARCELLE ${r.parcelle} &bull; SERRE ${r.serre}</td></tr>
-                <tr><th>Domaine & Date</th><td>${r.domaine} &bull; ${r.date}</td></tr>
-                <tr><th>Culture & Variété</th><td>${r.culture} - ${r.variete} (${r.superficie})</td></tr>
-                <tr><th>Fertilisation</th><td>${r.progFert}</td></tr>
-                <tr><th>Irrigation</th><td>Vol: ${r.volIrrigation} L | Temps: ${r.tempsIrrigation} min (Bassin: ${r.ecBassin})</td></tr>
-                <tr><th>Goutteur (PH / EC)</th><td>PH: ${r.phApport} &bull; EC: ${r.ecApport}</td></tr>
-                <tr><th>Jus Substrat (PH / EC)</th><td>PH: ${r.phSubstrat} &bull; EC: ${r.ecSubstrat}</td></tr>
-                <tr><th>Drainât (PH / EC)</th><td>PH: ${r.phDrainat} &bull; EC: ${r.ecDrainat}</td></tr>
-                <tr><th>Drainage Quantitatif</th><td>Irrigué: ${r.volIrrigueMl} mL | Drainé: ${r.volDraineMl} mL &rarr; <strong>${r.tauxDrainage}</strong></td></tr>
-                <tr><th>Observation</th><td style="color:#b3dcc4; font-style:italic;">${r.observation}</td></tr>
+                <tr class="png-divider"><td colspan="2">${r.bloc} - PARCELLE ${r.parcelle} - SERRE ${r.serre}</td></tr>
+                <tr><th>Date & Variété</th><td>${r.date} | ${r.variete} (${r.superficie})</td></tr>
+                <tr><th>Prog. Fertilisation</th><td>${r.progFert}</td></tr>
+                <tr><th>Irrigation (Vol / Temps)</th><td>${r.volIrr} L / ${r.tempsIrr} Min (EC Bassin: ${r.ecBassin})</td></tr>
+                <tr><th>Goutteur (PH / EC)</th><td>PH: ${r.phApport} | EC: ${r.ecApport}</td></tr>
+                <tr><th>Substrat (PH / EC)</th><td>PH: ${r.phSubstrat} | EC: ${r.ecSubstrat}</td></tr>
+                <tr><th>Drainât (PH / EC)</th><td>PH: ${r.phDrainat} | EC: ${r.ecDrainat}</td></tr>
+                <tr><th>Drainage (Vol / Taux)</th><td>Irr: ${r.volIrrigueMl} mL | Drn: ${r.volDraineMl} mL -> <strong>${r.tauxDrainage}</strong></td></tr>
+                <tr><th>Observation</th><td style="font-style:italic; color:#a2c4ae;">${r.observation}</td></tr>
             `;
         }
 
-        function telechargerFicheSeule(id) {
-            const r = localDatabase.find(item => item.id === id);
+        function telechargerPNGIndividuel(id) {
+            const r = db.find(item => item.id === id);
             if(!r) return;
-            document.getElementById('png-ind-title').innerText = `NATBERRY 15 - ${r.serre}`;
-            document.getElementById('table-ind-content').innerHTML = fabriquerContenuHtmlTableau(r);
+            document.getElementById('p-title').innerText = `NATBERRY 15 - ${r.serre}`;
+            document.getElementById('single-table-content').innerHTML = genererCodeHtmlTableau(r);
 
-            html2canvas(document.getElementById('capture-individuelle-box'), { scale: 2 }).then(canvas => {
-                const a = document.createElement('a');
-                a.download = `Fiche_${r.serre}_${r.date}.png`;
-                a.href = canvas.toDataURL('image/png');
-                a.click();
+            html2canvas(document.getElementById('single-report-png'), { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Fiche_Detaillee_${r.serre}_${r.date}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             });
         }
 
-        function telechargerBlocCompletEnPng() {
-            const dataFiltree = localDatabase.filter(item => item.bloc === blocSelectionneFiltre);
-            if(dataFiltree.length === 0) { alert(`Aucune donnée à exporter pour le ${blocSelectionneFiltre}.`); return; }
+        function telechargerFichesDuBlocActuel() {
+            const filteredData = db.filter(r => r.bloc === currentActiveBlocTab);
 
-            document.getElementById('png-bloc-main-title').innerText = `NATBERRY 15 - ${blocSelectionneFiltre}`;
-            document.getElementById('png-bloc-sub-title').innerText = `Suivi Agronomique Global - ${new Date().toLocaleDateString()}`;
+            if(filteredData.length === 0) { 
+                alert(`Aucune donnée enregistrée dans le ${currentActiveBlocTab} à exporter !`); 
+                return; 
+            }
 
-            const container = document.getElementById('container-global-bloc-fiches');
-            container.innerHTML = ""; 
+            document.getElementById('global-png-main-title').innerText = `NATBERRY 15 - ${currentActiveBlocTab}`;
+            document.getElementById('global-png-subtitle').innerText = `Rapport Détaillé des Serres du ${currentActiveBlocTab}`;
 
-            dataFiltree.forEach((r, idx) => {
-                const t = document.createElement('table');
-                t.className = "png-data-table";
-                if(idx > 0) t.className += " spacer-cards";
-                t.innerHTML = fabriquerContenuHtmlTableau(r);
-                container.appendChild(t);
+            const globalContainer = document.getElementById('global-fiches-container');
+            globalContainer.innerHTML = ""; 
+
+            filteredData.forEach((r, index) => {
+                const subTable = document.createElement('table');
+                subTable.className = "png-table";
+                if(index > 0) subTable.className += " global-card-spacing";
+                
+                subTable.innerHTML = genererCodeHtmlTableau(r);
+                globalContainer.appendChild(subTable);
             });
 
-            html2canvas(document.getElementById('capture-bloc-box'), { scale: 2 }).then(canvas => {
-                const a = document.createElement('a');
-                a.download = `Rapport_Fermes_${blocSelectionneFiltre.replace(" ", "_")}.png`;
-                a.href = canvas.toDataURL('image/png');
-                a.click();
+            html2canvas(document.getElementById('global-fiches-png'), { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Rapport_Detaille_${currentActiveBlocTab.replace(" ", "_")}_${new Date().toISOString().slice(0,10)}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             });
         }
     </script>
